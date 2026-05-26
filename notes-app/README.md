@@ -72,6 +72,9 @@ php artisan serve
 cp .env.example .env
 # Edit .env to set GEMINI_API_KEY
 
+# Build the containers
+docker compose build
+
 # Start all services
 docker compose up -d
 
