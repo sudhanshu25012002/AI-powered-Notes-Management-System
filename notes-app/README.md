@@ -68,21 +68,35 @@ php artisan serve
 ## Docker Setup
 
 ```bash
-# Copy environment file
+# 1. Copy environment file
 cp .env.example .env
 # Edit .env to set GEMINI_API_KEY
 
-# Build the containers
+# 2. Build the containers
 docker compose build
 
-# Start all services
+# 3. Start all services
 docker compose up -d
 
-# Run migrations inside the container
+# 4. Set directory permissions (fixes 500 error on Blade view compilation inside container)
+chmod -R 777 storage bootstrap/cache
+
+# 5. Run migrations and seed database inside container
 docker compose exec app php artisan migrate --seed
 
 # App available at: http://localhost:8000
+# API Docs available at: http://localhost:8000/api/documentation
 ```
+
+### Stopping the Services
+* **Stop and remove containers & networks** (retains database volume storage):
+  ```bash
+  docker compose down
+  ```
+* **Pause / Stop services** (without removing container instances):
+  ```bash
+  docker compose stop
+  ```
 
 ---
 
