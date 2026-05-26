@@ -4,6 +4,12 @@ A Laravel 12 REST API + Blade frontend for managing notes with **AI-powered sema
 
 ---
 
+### 🎥 Live Video Demo
+A full walkthrough of the application features (semantic search, AI summaries, premium dark theme, Swagger docs, and Docker setup) is recorded and saved in this repository:
+👉 **[Watch the Live Demo Video](./live-demo-vido.mp4)**
+
+---
+
 ## Features
 
 - ✅ Full CRUD for notes (title, content, tags)
