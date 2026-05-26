@@ -1,0 +1,331 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "AI-Powered Notes Management System API",
+        "description": "Laravel 12 REST API for managing notes with AI-powered semantic search and summaries using Google Gemini.",
+        "contact": {
+            "email": "admin@notes-app.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://notes-app.test",
+            "description": "Local Development Server"
+        }
+    ],
+    "paths": {
+        "/api/notes": {
+            "get": {
+                "tags": [
+                    "Notes"
+                ],
+                "summary": "List all notes with pagination",
+                "operationId": "bae18c4794ae9fa2869bd2d6172e8bc1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of notes"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Notes"
+                ],
+                "summary": "Create a new note",
+                "operationId": "b741a3f13d8dcdf760b41fbad8c68737",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "My Note",
+                                        "maxLength": 255
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Detailed content...",
+                                        "minLength": 10
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Note created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/notes/{id}": {
+            "get": {
+                "tags": [
+                    "Notes"
+                ],
+                "summary": "Get a single note by ID",
+                "operationId": "00f78d61d63bb5da699bf8d59cffb990",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Note details"
+                    },
+                    "404": {
+                        "description": "Note not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Notes"
+                ],
+                "summary": "Update an existing note",
+                "operationId": "ad1a404f450c11ee4f3ae2c7cf82ee66",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "content": {
+                                        "type": "string"
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Note updated successfully"
+                    },
+                    "404": {
+                        "description": "Note not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Notes"
+                ],
+                "summary": "Soft delete a note",
+                "operationId": "99dcc7e5a20cc64c35b75534a478c803",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Note deleted"
+                    },
+                    "404": {
+                        "description": "Note not found"
+                    }
+                }
+            }
+        },
+        "/api/search": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Semantic search across all notes using Gemini embeddings",
+                "operationId": "d70c8d72bc43cc6c7321086ae9d2c1f1",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search query (min 2, max 500 characters)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "machine learning algorithms"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Semantic search results ranked by similarity score"
+                    },
+                    "422": {
+                        "description": "Validation error — query required"
+                    },
+                    "503": {
+                        "description": "AI service temporarily unavailable"
+                    }
+                }
+            }
+        },
+        "/api/notes/{id}/summary": {
+            "post": {
+                "tags": [
+                    "Summary"
+                ],
+                "summary": "Generate or retrieve cached AI summary for a note",
+                "operationId": "9ae2d689daa9a43b082c46b717a94059",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Note ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "AI summary (generated or from cache)"
+                    },
+                    "404": {
+                        "description": "Note not found"
+                    },
+                    "503": {
+                        "description": "AI service temporarily unavailable"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Note": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "My Meeting Notes"
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "Discussed Q3 roadmap..."
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Validation failed."
+                    },
+                    "errors": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Notes",
+            "description": "CRUD operations for notes"
+        },
+        {
+            "name": "Search",
+            "description": "Semantic search using Gemini embeddings"
+        },
+        {
+            "name": "Summary",
+            "description": "AI summary generation using Gemini Flash"
+        }
+    ]
+}
